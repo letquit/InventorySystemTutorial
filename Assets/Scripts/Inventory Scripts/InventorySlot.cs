@@ -43,6 +43,17 @@ public class InventorySlot
     }
 
     /// <summary>
+    /// 更新库存槽位中的物品数据和数量
+    /// </summary>
+    /// <param name="data">要设置的库存物品数据</param>
+    /// <param name="amount">要设置的物品堆叠数量</param>
+    public void UpdateInventorySlot(InventoryItemData data, int amount)
+    {
+        itemData = data;
+        stackSize = amount;
+    }
+
+    /// <summary>
     /// 检查向当前堆叠中添加指定数量物品后是否还有剩余空间，并返回可添加的数量
     /// </summary>
     /// <param name="amountToAdd">要添加的物品数量</param>
