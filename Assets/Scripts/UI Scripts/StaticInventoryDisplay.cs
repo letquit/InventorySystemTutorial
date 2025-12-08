@@ -8,7 +8,7 @@ using UnityEngine;
 public class StaticInventoryDisplay : InventoryDisplay
 {
     [SerializeField] private InventoryHolder inventoryHolder;
-    [SerializeField] private InventorySlot_UI[] slots;
+    [SerializeField] private InventorySlotUI[] slots;
     
     /// <summary>
     /// 初始化组件，在Start阶段设置库存系统并绑定事件监听器
@@ -37,7 +37,7 @@ public class StaticInventoryDisplay : InventoryDisplay
     /// <param name="invToDisplay">要显示的库存系统实例</param>
     public override void AssignSlot(InventorySystem invToDisplay)
     {
-        slotDictionary = new Dictionary<InventorySlot_UI, InventorySlot>();
+        slotDictionary = new Dictionary<InventorySlotUI, InventorySlot>();
 
         // 检查UI槽位数量是否与库存系统大小匹配
         if (slots.Length != inventorySystem.InventorySize) Debug.Log($"Inventory slots out of sync on {this.gameObject}");

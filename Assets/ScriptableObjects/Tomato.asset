@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db2ba13bb9e1ce94b9b4aede7ed3e2e2, type: 3}
-  m_Name: Test Inventory Item 1
+  m_Name: Tomato
   m_EditorClassIdentifier: Assembly-CSharp::InventoryItemData
   id: 0
-  displayName: Test item 1
-  description: This is a test item.
-  icon: {fileID: 0}
+  displayName: Tomato
+  description: This is a Tomato!
+  icon: {fileID: -656353613, guid: 3e02f34deaabaad4cb245b02a5ea0008, type: 3}
   maxStackSize: 5

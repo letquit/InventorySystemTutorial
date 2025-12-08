@@ -43,6 +43,23 @@ public class InventorySlot
     }
 
     /// <summary>
+    /// 将指定库存槽位的物品分配给当前实例
+    /// </summary>
+    /// <param name="invSlot">要分配物品的库存槽位</param>
+    public void AssignItem(InventorySlot invSlot)
+    {
+        // 如果当前物品数据与目标槽位的物品数据相同，则直接增加堆叠数量
+        if (itemData == invSlot.itemData) AddToStack(invSlot.stackSize);
+        else
+        {
+            // 如果物品数据不同，则替换当前物品数据并重新设置堆叠数量
+            itemData = invSlot.itemData;
+            stackSize = 0;
+            AddToStack(invSlot.stackSize);
+        }
+    }
+
+    /// <summary>
     /// 更新库存槽位中的物品数据和数量
     /// </summary>
     /// <param name="data">要设置的库存物品数据</param>

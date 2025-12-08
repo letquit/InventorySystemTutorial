@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// <summary>
 /// 库存槽位UI类，负责显示和管理单个库存槽位的可视化界面
 /// </summary>
-public class InventorySlot_UI : MonoBehaviour
+public class InventorySlotUI : MonoBehaviour
 {
     [SerializeField] private Image itemSprite;
     [SerializeField] private TextMeshProUGUI itemCount;
@@ -65,14 +65,16 @@ public class InventorySlot_UI : MonoBehaviour
         }
         else
         {
-            ClearSlot();
+            itemSprite.color = Color.clear;
+            itemSprite.sprite = null;
+            itemCount.text = "";
         }
     }
-
+    
     /// <summary>
     /// 更新当前已分配槽位的UI显示
     /// </summary>
-    public void UpdateSlot()
+    public void UpdateUISlot()
     {
         if (assignedInventorySlot != null) UpdateUISlot(assignedInventorySlot);
     }
