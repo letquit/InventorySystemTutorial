@@ -111,4 +111,27 @@ public class InventorySlot
     {
         stackSize -= amount;
     }
+
+    /// <summary>
+    /// 将当前物品堆栈分成两半，创建一个新的InventorySlot对象表示分割出的一半
+    /// </summary>
+    /// <param name="splitStack">输出参数，返回分割出的一半物品堆栈，如果分割失败则为null</param>
+    /// <returns>如果成功分割堆栈则返回true，否则返回false</returns>
+    public bool SplitStack(out InventorySlot splitStack)
+    {
+        // 检查堆栈大小是否足够分割
+        if (stackSize <= 1)
+        {
+            splitStack = null;
+            return false;
+        }
+        
+        // 计算一半的堆栈数量并执行分割
+        int halfStack = Mathf.RoundToInt(stackSize / 2f);
+        RemoveFromStack(halfStack);
+        
+        // 创建新的物品槽位并返回
+        splitStack = new InventorySlot(itemData, halfStack);
+        return true;
+    }
 }
