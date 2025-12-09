@@ -3,6 +3,7 @@ using UnityEngine;
 /// <summary>
 /// 库存物品数据类，用于定义游戏中库存系统中每个物品的基础属性
 /// 继承自ScriptableObject，可以通过Unity编辑器创建资产文件
+/// 它可以被继承以创建不同类型的物品，例如药水和装备。
 /// </summary>
 [CreateAssetMenu(menuName = "Inventory System/Inventory Item")]
 public class InventoryItemData : ScriptableObject
@@ -37,4 +38,6 @@ public class InventoryItemData : ScriptableObject
     /// 定义单个物品槽位中该物品最多可以堆叠的数量
     /// </summary>
     public int maxStackSize;
+
+    public int goldValue;
 }

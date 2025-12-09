@@ -45,7 +45,7 @@ public class InventorySystem
         {
             foreach (var slot in invSlot)
             {
-                if (slot.RoomLeftInStack(amountToAdd))
+                if (slot.EnoughRoomLeftInStack(amountToAdd))
                 {
                     slot.AddToStack(amountToAdd);
                     OnInventorySlotChanged?.Invoke(slot);
@@ -54,12 +54,18 @@ public class InventorySystem
             }
         }
         
+        // 这实际上并没有考虑到最大栈大小。制作这个视频时我非常疲惫，哈哈。我会在后面的视频中修复这个问题——不过暂时保留这段代码也无妨。
         // 检查库存中是否有空槽位
         if (HasFreeSlot(out InventorySlot freeSlot))
         {
-            freeSlot.UpdateInventorySlot(itemToAdd, amountToAdd);
-            OnInventorySlotChanged?.Invoke(freeSlot);
-            return true;
+            // 如果空槽位有足够的空间，则更新槽位的物品数据
+            if (freeSlot.EnoughRoomLeftInStack(amountToAdd))
+            {
+                freeSlot.UpdateInventorySlot(itemToAdd, amountToAdd);
+                OnInventorySlotChanged?.Invoke(freeSlot);
+                return true;
+            }
+            // 添加实现：只取能够填满堆栈的数量，并检查是否有另一个空槽位来放置剩余物品。
         }
         
         return false;
@@ -70,11 +76,10 @@ public class InventorySystem
     /// </summary>
     /// <param name="itemToAdd">要检查的物品数据</param>
     /// <param name="invSlot">返回包含该物品的所有槽位列表</param>
-    /// <returns>如果库存中包含该物品则返回true，否则返回false</returns>
+    /// <returns>如果库存中包含该物品则返回true,获取所有这些槽位的列表，否则返回false</returns>
     public bool ContainsItem(InventoryItemData itemToAdd, out List<InventorySlot> invSlot)
     {
         invSlot = InventorySlots.Where(i => i.ItemData == itemToAdd).ToList();
-
         return invSlot.Count > 0;
     }
 

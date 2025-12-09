@@ -34,6 +34,7 @@ public class ItemPickUp : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         var inventory = other.transform.GetComponent<InventoryHolder>();
+        
         if (!inventory) return;
 
         if (inventory.InventorySystem.AddToInventory(itemData, 1))

@@ -8,8 +8,8 @@ using UnityEngine;
 [Serializable]
 public class InventorySlot
 {
-    [SerializeField] private InventoryItemData itemData;
-    [SerializeField] private int stackSize;
+    [SerializeField] private InventoryItemData itemData;    // 数据引用
+    [SerializeField] private int stackSize; // 当前堆叠大小 -有多少个这样的数据
     
     public InventoryItemData ItemData => itemData;
     public int StackSize => stackSize;
@@ -76,11 +76,11 @@ public class InventorySlot
     /// <param name="amountToAdd">要添加的物品数量</param>
     /// <param name="amountRemaining">还可添加的物品数量</param>
     /// <returns>如果可以添加指定数量的物品则返回true，否则返回false</returns>
-    public bool RoomLeftInStack(int amountToAdd, out int amountRemaining)
+    public bool EnoughRoomLeftInStack(int amountToAdd, out int amountRemaining)
     {
         amountRemaining = itemData.maxStackSize - stackSize;
         
-        return RoomLeftInStack(amountToAdd);
+        return EnoughRoomLeftInStack(amountToAdd);
     }
     
     /// <summary>
@@ -88,9 +88,9 @@ public class InventorySlot
     /// </summary>
     /// <param name="amountToAdd">要添加的物品数量</param>
     /// <returns>如果添加后不超过最大堆叠数则返回true，否则返回false</returns>
-    public bool RoomLeftInStack(int amountToAdd)
+    public bool EnoughRoomLeftInStack(int amountToAdd)
     {
-        if (stackSize + amountToAdd <= itemData.maxStackSize) return true;
+        if (itemData == null || itemData != null && stackSize + amountToAdd <= itemData.maxStackSize) return true;
         else return false;
     }
 
@@ -130,8 +130,9 @@ public class InventorySlot
         int halfStack = Mathf.RoundToInt(stackSize / 2f);
         RemoveFromStack(halfStack);
         
-        // 创建新的物品槽位并返回
+        // 创建新的物品槽位,堆叠数量为原来的一半。并返回
         splitStack = new InventorySlot(itemData, halfStack);
+
         return true;
     }
 }

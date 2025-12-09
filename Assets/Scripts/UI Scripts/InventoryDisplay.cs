@@ -11,7 +11,7 @@ public abstract class InventoryDisplay : MonoBehaviour
     [SerializeField] private MouseItemData mouseInventoryItem;
     
     protected InventorySystem inventorySystem;
-    protected Dictionary<InventorySlotUI, InventorySlot> slotDictionary;
+    protected Dictionary<InventorySlotUI, InventorySlot> slotDictionary;    // 将UI槽位与系统槽位配对
     
     /// <summary>
     /// 获取当前库存系统实例的属性
@@ -103,7 +103,7 @@ public abstract class InventoryDisplay : MonoBehaviour
                               mouseInventoryItem.assignedInventorySlot.ItemData;
 
             // 物品相同，并且目标槽位还有空间容纳鼠标上的物品数量
-            if (isSameItem && clickedUISlot.AssignedInventorySlot.RoomLeftInStack(mouseInventoryItem.assignedInventorySlot.StackSize))
+            if (isSameItem && clickedUISlot.AssignedInventorySlot.EnoughRoomLeftInStack(mouseInventoryItem.assignedInventorySlot.StackSize))
             {
                 clickedUISlot.AssignedInventorySlot.AssignItem(mouseInventoryItem.assignedInventorySlot);
                 clickedUISlot.UpdateUISlot();
@@ -113,7 +113,7 @@ public abstract class InventoryDisplay : MonoBehaviour
             }
             // 目标槽位无法完全容纳鼠标上的物品数量
             else if (isSameItem &&
-                     !clickedUISlot.AssignedInventorySlot.RoomLeftInStack(
+                     !clickedUISlot.AssignedInventorySlot.EnoughRoomLeftInStack(
                          mouseInventoryItem.assignedInventorySlot.StackSize, out int leftInStack))
             {
                 if (leftInStack < 1)
@@ -125,6 +125,7 @@ public abstract class InventoryDisplay : MonoBehaviour
                 {
                     // 将部分物品加入目标槽位，剩余留在鼠标上
                     int remainingOnMouse = mouseInventoryItem.assignedInventorySlot.StackSize - leftInStack;
+                    
                     clickedUISlot.AssignedInventorySlot.AddToStack(leftInStack);
                     clickedUISlot.UpdateUISlot();
 

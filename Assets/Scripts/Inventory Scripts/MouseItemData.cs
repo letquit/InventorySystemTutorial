@@ -17,12 +17,12 @@ public class MouseItemData : MonoBehaviour
     /// 物品图标显示组件
     /// </summary>
     public Image itemSprite;
-    
+
     /// <summary>
     /// 物品数量文本显示组件
     /// </summary>
     public TextMeshProUGUI itemCount;
-    
+
     /// <summary>
     /// 表示分配给当前对象的库存槽位
     /// </summary>
@@ -63,8 +63,10 @@ public class MouseItemData : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        //TODO: Add controller support.
+        
         // 只有在当前分配了有效物品数据时才进行位置同步与交互判断
-        if (assignedInventorySlot.ItemData != null)
+        if (assignedInventorySlot.ItemData != null) // 如果有物品，则跟随鼠标位置
         {
             transform.position = Mouse.current.position.ReadValue();
 
@@ -72,6 +74,7 @@ public class MouseItemData : MonoBehaviour
             if (Mouse.current.leftButton.wasPressedThisFrame && !IsPointerOverUIObject())
             {
                 ClearSlot();
+                // TODO: Drop the item on the ground.
             }
         }
     }
