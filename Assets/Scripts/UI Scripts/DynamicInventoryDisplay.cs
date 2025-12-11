@@ -27,8 +27,14 @@ public class DynamicInventoryDisplay : InventoryDisplay
     /// <param name="invToDisplay">要显示的库存系统对象</param>
     public void RefreshDynamicInventory(InventorySystem invToDisplay)
     {
+        // 清除所有现有槽位
         ClearSlots();
+        
+        // 设置新的库存系统并订阅槽位变化事件
         inventorySystem = invToDisplay;
+        if (inventorySystem != null) inventorySystem.OnInventorySlotChanged += UpdateSlot;
+        
+        // 为新的库存系统分配槽位
         AssignSlot(invToDisplay);
     }
 
@@ -68,5 +74,14 @@ public class DynamicInventoryDisplay : InventoryDisplay
         
         // 清空槽位字典
         if (slotDictionary != null) slotDictionary.Clear();
+    }
+
+    /// <summary>
+    /// 当对象被禁用时调用此方法，用于清理事件监听器
+    /// </summary>
+    private void OnDisable()
+    {
+        // 移除库存槽位变化事件的监听，确保对象禁用后不会继续响应事件
+        if (inventorySystem != null) inventorySystem.OnInventorySlotChanged -= UpdateSlot;
     }
 }

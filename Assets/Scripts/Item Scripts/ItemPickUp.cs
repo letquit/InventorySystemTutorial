@@ -33,11 +33,14 @@ public class ItemPickUp : MonoBehaviour
     /// <param name="other">进入触发器范围的碰撞体组件</param>
     private void OnTriggerEnter(Collider other)
     {
-        var inventory = other.transform.GetComponent<InventoryHolder>();
+        // 获取碰撞体对应游戏对象上的玩家背包组件
+        var inventory = other.transform.GetComponent<PlayerInventoryHolder>();
         
+        // 如果没有找到背包组件则直接返回
         if (!inventory) return;
 
-        if (inventory.InventorySystem.AddToInventory(itemData, 1))
+        // 尝试将物品添加到背包中，如果添加成功则销毁当前游戏对象
+        if (inventory.AddToInventory(itemData, 1))
         {
             Destroy(this.gameObject);
         }

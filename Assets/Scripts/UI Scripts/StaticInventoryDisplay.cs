@@ -22,7 +22,7 @@ public class StaticInventoryDisplay : InventoryDisplay
         // 检查是否有分配的库存持有者，如果有则设置库存系统并绑定事件
         if (inventoryHolder != null)
         {
-            inventorySystem = inventoryHolder.InventorySystem;
+            inventorySystem = inventoryHolder.PrimaryInventorySystem;
             inventorySystem.OnInventorySlotChanged += UpdateSlot;
         }
         else Debug.LogWarning($"No inventory assigned to {this.gameObject}");

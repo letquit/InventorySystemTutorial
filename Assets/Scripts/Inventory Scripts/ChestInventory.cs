@@ -19,7 +19,7 @@ public class ChestInventory : InventoryHolder, IInteractable
     public void Interact(Interactor interactor, out bool interactSuccessful)
     {
         // 触发动态库存显示请求事件，显示箱子的库存界面
-        OnDynamicInventoryDisplayRequested?.Invoke(InventorySystem);
+        OnDynamicInventoryDisplayRequested?.Invoke(PrimaryInventorySystem);
         interactSuccessful = true;
     }
 
