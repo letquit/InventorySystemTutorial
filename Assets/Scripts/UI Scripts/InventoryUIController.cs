@@ -27,14 +27,16 @@ public class InventoryUIController : MonoBehaviour
     private void OnEnable()
     {
         InventoryHolder.OnDynamicInventoryDisplayRequested += DisplayInventory;
+        PlayerInventoryHolder.OnPlayerInventoryDisplayRequested += DisplayPlayerInventory;
     }
-    
+
     /// <summary>
     /// 当组件禁用时注销事件监听器，避免内存泄漏
     /// </summary>
     private void OnDisable()
     {
         InventoryHolder.OnDynamicInventoryDisplayRequested -= DisplayInventory;
+        PlayerInventoryHolder.OnPlayerInventoryDisplayRequested -= DisplayPlayerInventory;
     }
 
     /// <summary>
@@ -49,7 +51,6 @@ public class InventoryUIController : MonoBehaviour
         // 检查ESC键是否被按下，如果玩家背包面板处于激活状态则将其关闭
         if (playerBackpackPanel.gameObject.activeInHierarchy && Keyboard.current.escapeKey.wasPressedThisFrame)
             playerBackpackPanel.gameObject.SetActive(false);
-
     }
     
     /// <summary>
@@ -62,4 +63,18 @@ public class InventoryUIController : MonoBehaviour
         inventoryPanel.gameObject.SetActive(true);
         inventoryPanel.RefreshDynamicInventory(invToDisplay, offset);
     }
+    
+    /// <summary>
+    /// 显示玩家背包界面
+    /// </summary>
+    /// <param name="invToDisplay">需要显示的库存系统对象</param>
+    /// <param name="offset">显示偏移量，用于控制库存显示的起始位置</param>
+    private void DisplayPlayerInventory(InventorySystem invToDisplay, int offset)
+    {
+        // 激活玩家背包面板
+        playerBackpackPanel.gameObject.SetActive(true);
+        // 刷新动态库存显示
+        playerBackpackPanel.RefreshDynamicInventory(invToDisplay, offset);
+    }
+
 }

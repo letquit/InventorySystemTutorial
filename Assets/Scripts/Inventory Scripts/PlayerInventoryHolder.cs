@@ -15,6 +15,13 @@ public class PlayerInventoryHolder : InventoryHolder
     public static UnityAction OnPlayerInventoryChanged;
 
     /// <summary>
+    /// 当玩家请求显示库存界面时触发的事件回调
+    /// </summary>
+    /// <param name="inventorySystem">库存系统实例，包含玩家的物品信息</param>
+    /// <param name="playerId">玩家ID，用于标识哪个玩家请求显示库存</param>
+    public static UnityAction<InventorySystem, int> OnPlayerInventoryDisplayRequested;
+    
+    /// <summary>
     /// 初始化玩家库存数据，在游戏开始时将当前主库存系统保存到存档管理器中
     /// </summary>
     private void Start()
@@ -44,7 +51,7 @@ public class PlayerInventoryHolder : InventoryHolder
     {
         // 检测B键是否在当前帧被按下
         if (Keyboard.current.bKey.wasPressedThisFrame)
-            OnDynamicInventoryDisplayRequested?.Invoke(primaryInventorySystem, offset);
+            OnPlayerInventoryDisplayRequested?.Invoke(primaryInventorySystem, offset);
     }
 
     /// <summary>
