@@ -3,7 +3,8 @@ using UnityEngine;
 using UnityEngine.Events;
 
 /// <summary>
-/// 箱子库存类，继承自InventoryHolder并实现IInteractable接口，用于管理箱子的物品存储和交互功能
+/// 玩家物品栏类，继承自InventoryHolder并实现IInteractable接口
+/// 负责管理 chests（箱子）的物品存储功能，并支持与玩家的交互操作
 /// </summary>
 [RequireComponent(typeof(UniqueID))]
 public class ChestInventory : InventoryHolder, IInteractable
@@ -12,95 +13,55 @@ public class ChestInventory : InventoryHolder, IInteractable
     /// 交互完成时触发的Unity事件回调
     /// </summary>
     public UnityAction<IInteractable> OnInteractionComplete { get; set; }
-    
-    /// <summary>
-    /// 在Awake阶段注册游戏加载事件以恢复库存数据，并调用基类初始化逻辑
-    /// </summary>
-    protected override void Awake()
-    {
-        base.Awake();
-        SaveLoad.OnLoadGame += LoadInventory;
-    }
 
     /// <summary>
-    /// 初始化箱子保存数据，在Start中将当前箱子的状态存入全局保存字典
+    /// 在游戏对象启动时执行初始化操作
+    /// 创建当前chest的保存数据并将其添加到全局保存管理器中
     /// </summary>
     private void Start()
     {
-        var chestSaveData = new ChestSaveData(this.primaryInventorySystem, this.transform.position, this.transform.rotation);
-        // SaveGameManager.Data.ChestDictionary.Add(GetComponent<UniqueID>().ID, chestSaveData);
-        // 将当前箱子的数据添加到保存系统中的字典里
-        var chestId = GetComponent<UniqueID>().ID;
-        SaveGameManager.Data.ChestDictionary[chestId] = chestSaveData;
+        // 创建包含当前物品栏系统、位置和旋转信息的保存数据
+        var chestSaveData = new InventorySaveData(this.primaryInventorySystem, this.transform.position, this.transform.rotation);
+        // 使用唯一ID将chest数据添加到保存字典中
+        SaveGameManager.Data.ChestDictionary.Add(GetComponent<UniqueID>().ID, chestSaveData);
     }
 
     /// <summary>
-    /// 根据唯一ID从保存数据中加载箱子的位置、旋转及库存信息
+    /// 从保存数据中加载物品栏信息
+    /// 根据唯一ID查找对应的chest数据并恢复其状态
     /// </summary>
     /// <param name="data">包含所有保存数据的对象</param>
-    private void LoadInventory(SaveData data)
+    protected override void LoadInventory(SaveData data)
     {
-        // 检查此特定箱子的保存数据，如果存在则加载它
-        if (data.ChestDictionary.TryGetValue(GetComponent<UniqueID>().ID, out ChestSaveData chestData))
+        // 尝试根据唯一ID获取对应的chest保存数据
+        if (data.ChestDictionary.TryGetValue(GetComponent<UniqueID>().ID, out InventorySaveData chestData))
         {
+            // 恢复物品栏系统、位置和旋转信息
             this.primaryInventorySystem = chestData.invSystem;
             this.transform.position = chestData.position;
             this.transform.rotation = chestData.rotation;
         }
     }
-    
+
     /// <summary>
-    /// 处理与箱子的交互逻辑，当玩家与箱子互动时调用此方法
+    /// 处理与其他游戏对象的交互逻辑
+    /// 当玩家与chest交互时显示其物品栏界面
     /// </summary>
-    /// <param name="interactor">执行交互的交互者对象</param>
+    /// <param name="interactor">发起交互的对象（通常是玩家）</param>
     /// <param name="interactSuccessful">输出参数，指示交互是否成功执行</param>
     public void Interact(Interactor interactor, out bool interactSuccessful)
     {
-        // 触发动态库存显示请求事件，显示箱子的库存界面
-        OnDynamicInventoryDisplayRequested?.Invoke(PrimaryInventorySystem);
+        // 触发动态物品栏显示请求，展示当前chest的物品栏
+        OnDynamicInventoryDisplayRequested?.Invoke(PrimaryInventorySystem, 0);
         interactSuccessful = true;
     }
 
     /// <summary>
-    /// 结束与箱子的交互，清理交互状态
+    /// 结束当前交互过程
+    /// 可用于清理交互相关的资源或状态
     /// </summary>
     public void EndInteraction()
     {
         
-    }
-}
-
-/// <summary>
-/// 用于序列化保存箱子相关信息的数据结构
-/// </summary>
-[Serializable]
-public struct ChestSaveData
-{
-    /// <summary>
-    /// 箱子所持有的库存系统实例
-    /// </summary>
-    public InventorySystem invSystem;
-    
-    /// <summary>
-    /// 箱子在世界坐标中的位置
-    /// </summary>
-    public Vector3 position;
-    
-    /// <summary>
-    /// 箱子在世界坐标中的旋转角度
-    /// </summary>
-    public Quaternion rotation;
-    
-    /// <summary>
-    /// 构造函数，初始化箱子保存数据
-    /// </summary>
-    /// <param name="invSystem">库存系统实例</param>
-    /// <param name="position">箱子的世界坐标位置</param>
-    /// <param name="rotation">箱子的世界坐标旋转</param>
-    public ChestSaveData(InventorySystem invSystem, Vector3 position, Quaternion rotation)
-    {
-        this.invSystem = invSystem;
-        this.position = position;
-        this.rotation = rotation;
     }
 }

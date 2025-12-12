@@ -37,7 +37,8 @@ public abstract class InventoryDisplay : MonoBehaviour
     /// 必须在子类中实现具体的槽位分配逻辑
     /// </summary>
     /// <param name="invToDisplay">需要显示的库存系统实例</param>
-    public abstract void AssignSlot(InventorySystem invToDisplay);
+    /// <param name="offset">槽位偏移量，用于确定槽位的起始位置</param>
+    public abstract void AssignSlot(InventorySystem invToDisplay, int offset);
 
     /// <summary>
     /// 更新指定库存槽位的UI显示

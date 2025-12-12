@@ -19,15 +19,25 @@ public class SaveData
     /// <summary>
     /// 箱子字典，键为箱子ID，值为箱子保存数据
     /// </summary>
-    public SerializableDictionary<string, ChestSaveData> ChestDictionary;
+    public SerializableDictionary<string, InventorySaveData> ChestDictionary;
+    
+    /// <summary>
+    /// 玩家背包保存数据
+    /// </summary>
+    public InventorySaveData PlayerInventory;
     
     /// <summary>
     /// 初始化存档数据对象，创建各个数据集合的实例
     /// </summary>
     public SaveData()
     {
+        // 初始化已收集物品列表
         CollectedItems = new List<string>();
+        // 初始化激活物品字典
         ActiveItems = new SerializableDictionary<string, ItemPickUpSaveData>();
-        ChestDictionary = new SerializableDictionary<string, ChestSaveData>();
+        // 初始化箱子字典
+        ChestDictionary = new SerializableDictionary<string, InventorySaveData>();
+        // 初始化玩家背包数据
+        PlayerInventory = new InventorySaveData();
     }
 }

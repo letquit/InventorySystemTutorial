@@ -9,31 +9,42 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class PlayerInventoryHolder : InventoryHolder
 {
-    [SerializeField] protected int secondaryInventorySize;
-    // 背包槽位系统
-    [SerializeField] protected InventorySystem secondInventorySystem;
-    
-    public InventorySystem SecondInventorySystem => secondInventorySystem;
-    
-    public static UnityAction<InventorySystem> OnPlayerBackpackDisplayRequested;
-    
     /// <summary>
-    /// 在对象唤醒时初始化，创建背包槽位系统
+    /// 当玩家库存发生变化时触发的事件回调
     /// </summary>
-    protected override void Awake()
+    public static UnityAction OnPlayerInventoryChanged;
+
+    /// <summary>
+    /// 初始化玩家库存数据，在游戏开始时将当前主库存系统保存到存档管理器中
+    /// </summary>
+    private void Start()
     {
-        base.Awake();
-        
-        secondInventorySystem = new InventorySystem(secondaryInventorySize);
+        SaveGameManager.Data.PlayerInventory = new InventorySaveData(primaryInventorySystem);
     }
 
     /// <summary>
-    /// 每帧检查键盘输入，当按下B键时触发背包显示事件
+    /// 从存档数据中加载玩家库存信息
+    /// </summary>
+    /// <param name="data">包含玩家库存数据的存档数据对象</param>
+    protected override void LoadInventory(SaveData data)
+    {
+        // 检查存档中的库存系统数据是否存在
+        if (data.PlayerInventory.invSystem != null)
+        {
+            this.primaryInventorySystem = data.PlayerInventory.invSystem;
+            // 触发库存变更事件
+            OnPlayerInventoryChanged?.Invoke();
+        }
+    }
+    
+    /// <summary>
+    /// 每帧检测玩家输入，当按下B键时触发动态库存显示请求事件
     /// </summary>
     private void Update()
     {
-        // 检测B键是否被按下，如果按下则调用背包显示事件
-        if (Keyboard.current.bKey.wasPressedThisFrame) OnPlayerBackpackDisplayRequested?.Invoke(secondInventorySystem);
+        // 检测B键是否在当前帧被按下
+        if (Keyboard.current.bKey.wasPressedThisFrame)
+            OnDynamicInventoryDisplayRequested?.Invoke(primaryInventorySystem, offset);
     }
 
     /// <summary>
@@ -47,11 +58,6 @@ public class PlayerInventoryHolder : InventoryHolder
     {
         // 首先尝试添加到快捷栏槽位
         if (primaryInventorySystem.AddToInventory(data, amount))
-        {
-            return true;
-        }
-        // 如果快捷栏槽位添加失败，尝试添加到背包槽位
-        else if (secondInventorySystem.AddToInventory(data, amount))
         {
             return true;
         }

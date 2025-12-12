@@ -53,8 +53,7 @@ public class ItemPickUp : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        // SaveGameManager.Data.ActiveItems.Add(id, itemSaveData);
-        SaveGameManager.Data.ActiveItems[id] = itemSaveData;
+        SaveGameManager.Data.ActiveItems.Add(id, itemSaveData);
     }
 
     /// <summary>

@@ -2,24 +2,38 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 静态库存显示类，用于在UI上显示固定的库存槽位
-/// 继承自InventoryDisplay基类，负责初始化和管理静态库存的UI显示
+/// 静态库存显示类，用于显示固定位置的库存界面
+/// 继承自InventoryDisplay基类，负责管理静态库存UI的显示和更新
 /// </summary>
 public class StaticInventoryDisplay : InventoryDisplay
 {
     [SerializeField] private InventoryHolder inventoryHolder;
     [SerializeField] private InventorySlotUI[] slots;
+
+    /// <summary>
+    /// 当组件启用时注册库存变化事件监听器
+    /// </summary>
+    private void OnEnable()
+    {
+        PlayerInventoryHolder.OnPlayerInventoryChanged += RefreshStaticDisplay;
+    }
     
     /// <summary>
-    /// 初始化组件，在Start阶段设置库存系统并绑定事件监听器
-    /// 调用基类Start方法，然后初始化库存系统引用并注册库存槽位变化事件
-    /// 最后调用AssignSlot方法分配槽位
+    /// 当组件禁用时注销库存变化事件监听器
+    /// 防止内存泄漏和无效引用
     /// </summary>
-    protected override void Start()
+    private void OnDisable()
     {
-        base.Start();
+        PlayerInventoryHolder.OnPlayerInventoryChanged -= RefreshStaticDisplay;
+    }
 
-        // 检查是否有分配的库存持有者，如果有则设置库存系统并绑定事件
+    /// <summary>
+    /// 刷新静态库存显示界面
+    /// 重新绑定库存系统并更新UI槽位显示
+    /// </summary>
+    private void RefreshStaticDisplay()
+    {
+        // 检查是否有分配的库存持有者
         if (inventoryHolder != null)
         {
             inventorySystem = inventoryHolder.PrimaryInventorySystem;
@@ -27,23 +41,33 @@ public class StaticInventoryDisplay : InventoryDisplay
         }
         else Debug.LogWarning($"No inventory assigned to {this.gameObject}");
         
-        AssignSlot(inventorySystem);
+        // 从索引0开始分配槽位
+        AssignSlot(inventorySystem, 0);
+    }
+
+    /// <summary>
+    /// 组件启动时的初始化方法
+    /// 调用基类Start方法并刷新显示界面
+    /// </summary>
+    protected override void Start()
+    {
+        base.Start();
+
+        RefreshStaticDisplay();
     } 
     
     /// <summary>
-    /// 分配库存槽位到UI元素，建立UI槽位与库存槽位的映射关系
-    /// 创建slotDictionary字典，并为每个UI槽位初始化对应的库存槽位数据
+    /// 为库存系统分配UI槽位
+    /// 建立UI槽位与库存槽位之间的映射关系
     /// </summary>
-    /// <param name="invToDisplay">要显示的库存系统实例</param>
-    public override void AssignSlot(InventorySystem invToDisplay)
+    /// <param name="invToDisplay">要显示的库存系统</param>
+    /// <param name="offset">槽位偏移量</param>
+    public override void AssignSlot(InventorySystem invToDisplay, int offset)
     {
         slotDictionary = new Dictionary<InventorySlotUI, InventorySlot>();
-
-        // 检查UI槽位数量是否与库存系统大小匹配
-        if (slots.Length != inventorySystem.InventorySize) Debug.Log($"Inventory slots out of sync on {this.gameObject}");
         
-        // 遍历所有库存槽位，建立UI槽位与库存槽位的映射关系并初始化UI槽位
-        for (int i = 0; i < inventorySystem.InventorySize; i++)
+        // 根据库存持有者的偏移值创建槽位映射
+        for (int i = 0; i < inventoryHolder.Offset; i++)
         {
             slotDictionary.Add(slots[i], inventorySystem.InventorySlots[i]);
             slots[i].Init(inventorySystem.InventorySlots[i]);

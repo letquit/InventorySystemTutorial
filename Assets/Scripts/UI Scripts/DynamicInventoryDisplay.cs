@@ -25,7 +25,8 @@ public class DynamicInventoryDisplay : InventoryDisplay
     /// 清除现有槽位并重新分配新的库存系统数据
     /// </summary>
     /// <param name="invToDisplay">要显示的库存系统对象</param>
-    public void RefreshDynamicInventory(InventorySystem invToDisplay)
+    /// <param name="offset">库存槽位分配的起始偏移量</param>
+    public void RefreshDynamicInventory(InventorySystem invToDisplay, int offset)
     {
         // 清除所有现有槽位
         ClearSlots();
@@ -34,8 +35,7 @@ public class DynamicInventoryDisplay : InventoryDisplay
         inventorySystem = invToDisplay;
         if (inventorySystem != null) inventorySystem.OnInventorySlotChanged += UpdateSlot;
         
-        // 为新的库存系统分配槽位
-        AssignSlot(invToDisplay);
+        AssignSlot(invToDisplay, offset);
     }
 
     /// <summary>
@@ -43,15 +43,15 @@ public class DynamicInventoryDisplay : InventoryDisplay
     /// 根据传入的库存系统创建对应数量的UI槽位
     /// </summary>
     /// <param name="invToDisplay">要显示的库存系统对象</param>
-    public override void AssignSlot(InventorySystem invToDisplay)
+    /// <param name="offset">库存槽位分配的起始偏移量</param>
+    public override void AssignSlot(InventorySystem invToDisplay, int offset)
     {
         slotDictionary = new Dictionary<InventorySlotUI, InventorySlot>();
         
-        // 如果传入的库存系统为空则直接返回
         if (invToDisplay == null) return;
 
-        // 遍历库存系统的所有槽位，为每个槽位创建对应的UI元素
-        for (int i = 0; i < invToDisplay.InventorySize; i++)
+        // 从指定偏移量开始创建库存槽位UI
+        for (int i = offset; i < invToDisplay.InventorySize; i++)
         {
             var uiSlot = Instantiate(slotPrefab, transform);
             slotDictionary.Add(uiSlot, invToDisplay.InventorySlots[i]);
