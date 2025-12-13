@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db2ba13bb9e1ce94b9b4aede7ed3e2e2, type: 3}
+  m_Name: HealthPotionData
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryItemData
+  id: 50
+  displayName: Health Potion
+  description: This is a health potion!
+  icon: {fileID: 21300000, guid: 6c7b065c6b8ef844d83a901b260cf136, type: 3}
+  maxStackSize: 5
+  goldValue: 1
+  itemPrefab: {fileID: 6863595513248474275, guid: 2a1bed1b00a3f2e4cbcf58e8f962d49c, type: 3}

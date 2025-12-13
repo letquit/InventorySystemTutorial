@@ -9,7 +9,7 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class UniqueID : MonoBehaviour
 {
-    [ReadOnly, SerializeField] private string id = Guid.NewGuid().ToString();
+    [ReadOnly, SerializeField] private string id;
 
     [SerializeField]
     private static SerializableDictionary<string, GameObject> idDatabase =
@@ -22,11 +22,15 @@ public class UniqueID : MonoBehaviour
     public string ID => id;
 
     /// <summary>
-    /// 当脚本在编辑器中被验证时调用
-    /// 检查当前ID是否已存在于数据库中，如果存在则生成新的ID
+    /// Unity生命周期函数，在对象被加载时调用。用于初始化ID数据库并管理游戏对象的注册。
     /// </summary>
-    private void OnValidate()
+    private void Awake()
     {
+        // 初始化ID数据库，如果为空则创建新的可序列化字典
+        if (idDatabase == null)
+            idDatabase = new SerializableDictionary<string, GameObject>();
+        
+        // 检查当前ID是否已存在于数据库中，如果存在则执行生成逻辑，否则将当前对象添加到数据库中
         if (idDatabase.ContainsKey(id)) Generate();
         else idDatabase.Add(id, this.gameObject);
     }

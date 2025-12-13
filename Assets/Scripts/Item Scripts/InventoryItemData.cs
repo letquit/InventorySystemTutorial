@@ -39,5 +39,13 @@ public class InventoryItemData : ScriptableObject
     /// </summary>
     public int maxStackSize;
 
+    /// <summary>
+    /// 物品的金币价值
+    /// </summary>
     public int goldValue;
+
+    /// <summary>
+    /// 物品的预制体对象
+    /// </summary>
+    public GameObject itemPrefab;
 }

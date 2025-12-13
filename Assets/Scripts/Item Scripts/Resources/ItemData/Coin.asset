@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db2ba13bb9e1ce94b9b4aede7ed3e2e2, type: 3}
+  m_Name: Coin
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryItemData
+  id: 0
+  displayName: Coin
+  description: This is Coin.
+  icon: {fileID: 21300000, guid: 74370b42738b4f041bf3246a3cb49a85, type: 3}
+  maxStackSize: 10
+  goldValue: 20
+  itemPrefab: {fileID: 7472312076635046549, guid: 041bad0d7c6dca94fb63fcae231fb8b2, type: 3}

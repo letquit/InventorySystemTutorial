@@ -31,6 +31,9 @@ public class InventorySlotUI : MonoBehaviour
     private void Awake()
     {
         ClearSlot();
+
+        // 保持图标的宽高比
+        itemSprite.preserveAspect = true;
         
         button = GetComponent<Button>();
         button?.onClick.AddListener(OnUISlotClick);

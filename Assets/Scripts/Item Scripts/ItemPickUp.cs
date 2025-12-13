@@ -19,6 +19,11 @@ public class ItemPickUp : MonoBehaviour
     /// 要拾取的物品数据
     /// </summary>
     public InventoryItemData itemData;
+    
+    /// <summary>
+    /// 序列化字段，用于控制旋转速度的浮点数变量
+    /// </summary>
+    [SerializeField] private float rotationSpeed = 20f;
 
     private SphereCollider myCollider;
 
@@ -39,7 +44,6 @@ public class ItemPickUp : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        id = GetComponent<UniqueID>().ID;
         SaveLoad.OnLoadGame += LoadData;
         itemSaveData = new ItemPickUpSaveData(itemData, transform.position, transform.rotation);
         
@@ -49,11 +53,26 @@ public class ItemPickUp : MonoBehaviour
     }
 
     /// <summary>
-    /// 初始化操作，在Start阶段将当前物品加入活跃物品列表中
+    /// 初始化对象，在对象启用时自动调用
     /// </summary>
+    /// <remarks>
+    /// 获取对象的唯一标识符并将其添加到保存管理器的活动物品列表中
+    /// </remarks>
     private void Start()
     {
+        id = GetComponent<UniqueID>().ID;
         SaveGameManager.Data.ActiveItems.Add(id, itemSaveData);
+    }
+
+    /// <summary>
+    /// 每帧更新对象状态
+    /// </summary>
+    /// <remarks>
+    /// 使对象绕Y轴持续旋转，实现旋转动画效果
+    /// </remarks>
+    private void Update()
+    {
+        transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
     }
 
     /// <summary>

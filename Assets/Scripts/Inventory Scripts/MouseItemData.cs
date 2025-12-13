@@ -29,15 +29,34 @@ public class MouseItemData : MonoBehaviour
     public InventorySlot assignedInventorySlot;
 
     /// <summary>
-    /// 在对象唤醒时初始化物品图标和数量显示
-    /// 将物品图标设置为透明，数量文本设置为空字符串
+    /// 玩家对象的变换组件引用，用于获取玩家的位置和旋转信息
     /// </summary>
+    private Transform _playerTransform;
+
+    /// <summary>
+    /// 物体掉落时相对于玩家位置的偏移距离
+    /// </summary>
+    public float dropOffset = 3f;
+
+    /// <summary>
+    /// 初始化游戏对象组件和状态
+    /// </summary>
+    /// <remarks>
+    /// 此函数在对象创建时自动调用，用于初始化物品显示组件的状态，
+    /// 包括设置图标透明度、文本内容以及获取玩家对象的引用。
+    /// </remarks>
     private void Awake()
     {
         // 初始化物品图标为透明状态
         itemSprite.color = Color.clear;
+        itemSprite.preserveAspect = true;
+        
         // 初始化物品数量文本为空
         itemCount.text = "";
+        
+        // 获取玩家对象的Transform组件引用
+        _playerTransform = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        if (_playerTransform == null) Debug.Log("Player not found!");
     }
 
     /// <summary>
@@ -47,14 +66,27 @@ public class MouseItemData : MonoBehaviour
     public void UpdateMouseSlot(InventorySlot invSlot)
     {
         assignedInventorySlot.AssignItem(invSlot);
-        itemSprite.sprite = invSlot.ItemData.icon;
+        UpdateMouseSlot();
+    }
+    
+    /// <summary>
+    /// 更新鼠标槽位的显示状态
+    /// </summary>
+    /// <remarks>
+    /// 该函数用于更新鼠标槽位中物品的图标显示、堆叠数量显示以及图标颜色
+    /// </remarks>
+    public void UpdateMouseSlot()
+    {
+        // 设置物品图标
+        itemSprite.sprite = assignedInventorySlot.ItemData.icon;
         
-        // 如果堆叠数量大于1则显示具体数值，否则隐藏数量显示
-        if (invSlot.StackSize > 1) 
-            itemCount.text = invSlot.StackSize.ToString();
+        // 根据堆叠数量决定是否显示具体数值
+        if (assignedInventorySlot.StackSize > 1)
+            itemCount.text = assignedInventorySlot.StackSize.ToString();
         else 
             itemCount.text = "";
             
+        // 恢复图标为正常颜色
         itemSprite.color = Color.white;
     }
 
@@ -63,18 +95,40 @@ public class MouseItemData : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        //TODO: Add controller support.
-        
         // 只有在当前分配了有效物品数据时才进行位置同步与交互判断
         if (assignedInventorySlot.ItemData != null) // 如果有物品，则跟随鼠标位置
         {
+            // 同步鼠标槽位位置到当前鼠标位置
             transform.position = Mouse.current.position.ReadValue();
 
-            // 当按下鼠标左键且未指向任何UI元素时清除当前槽位内容
+            // 检测鼠标左键点击且未指向UI元素的情况
             if (Mouse.current.leftButton.wasPressedThisFrame && !IsPointerOverUIObject())
             {
-                ClearSlot();
-                // TODO: Drop the item on the ground.
+                // 如果物品有预制体，则在角色前方实例化该物品
+                if (assignedInventorySlot.ItemData.itemPrefab != null)
+                {
+                    // 计算物品掉落位置，位于角色前方一定距离处
+                    Vector3 dropPosition = _playerTransform.position + _playerTransform.forward * dropOffset;
+                    dropPosition.y = -0.5f;
+        
+                    // 实例化物品预制体
+                    Instantiate(assignedInventorySlot.ItemData.itemPrefab,
+                        dropPosition, Quaternion.identity);
+                }
+
+                // 根据堆叠数量决定是减少堆叠还是完全清空槽位
+                if (assignedInventorySlot.StackSize > 1)
+                {
+                    // 减少堆叠数量
+                    assignedInventorySlot.AddToStack(-1);
+                    // 更新鼠标槽位显示
+                    UpdateMouseSlot();
+                }
+                else
+                {
+                    // 清空整个槽位
+                    ClearSlot();
+                }
             }
         }
     }
