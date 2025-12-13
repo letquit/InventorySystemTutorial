@@ -1,8 +1,6 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
-using Random = UnityEngine.Random;
 
 /// <summary>
 /// 库存UI控制器类，负责管理游戏中库存界面的显示和交互

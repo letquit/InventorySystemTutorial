@@ -6,22 +6,36 @@ using UnityEngine;
 /// 包含物品数据和堆叠数量信息
 /// </summary>
 [Serializable]
-public class InventorySlot
+public class InventorySlot : ISerializationCallbackReceiver
 {
-    [SerializeField] private InventoryItemData itemData;    // 数据引用
-    [SerializeField] private int stackSize; // 当前堆叠大小 -有多少个这样的数据
+    /// <summary>
+    /// 物品数据引用，用于存储物品的详细信息
+    /// </summary>
+    [NonSerialized] private InventoryItemData itemData;
+
+    /// <summary>
+    /// 物品唯一标识符
+    /// </summary>
+    [SerializeField] private int itemID;
+
+    /// <summary>
+    /// 当前物品堆叠数量
+    /// </summary>
+    [SerializeField] private int stackSize;
     
     public InventoryItemData ItemData => itemData;
     public int StackSize => stackSize;
 
     /// <summary>
-    /// 构造函数，使用指定的物品数据和数量初始化库存槽位
+    /// 初始化库存槽位对象
     /// </summary>
-    /// <param name="source">要设置的物品数据</param>
-    /// <param name="amount">初始堆叠数量</param>
+    /// <param name="source">库存物品数据源，用于初始化槽位的物品信息</param>
+    /// <param name="amount">物品数量，表示该槽位中物品的堆叠大小</param>
     public InventorySlot(InventoryItemData source, int amount)
     {
+        // 初始化库存槽位的基本属性
         itemData = source;
+        itemID = itemData.id;
         stackSize = amount;
     }
 
@@ -34,11 +48,15 @@ public class InventorySlot
     }
 
     /// <summary>
-    /// 清空当前槽位，将物品数据设为null，堆叠数量设为-1
+    /// 清空物品槽位的数据
     /// </summary>
+    /// <remarks>
+    /// 将物品槽位的所有数据重置为初始状态，包括物品数据、物品ID和堆叠数量
+    /// </remarks>
     public void ClearSlot()
     {
         itemData = null;
+        itemID = -1;
         stackSize = -1;
     }
 
@@ -54,19 +72,23 @@ public class InventorySlot
         {
             // 如果物品数据不同，则替换当前物品数据并重新设置堆叠数量
             itemData = invSlot.itemData;
+            itemID = itemData.id;
             stackSize = 0;
             AddToStack(invSlot.stackSize);
         }
     }
 
     /// <summary>
-    /// 更新库存槽位中的物品数据和数量
+    /// 更新库存槽位的信息
     /// </summary>
-    /// <param name="data">要设置的库存物品数据</param>
-    /// <param name="amount">要设置的物品堆叠数量</param>
+    /// <param name="data">要设置的物品数据</param>
+    /// <param name="amount">要设置的堆叠数量</param>
     public void UpdateInventorySlot(InventoryItemData data, int amount)
     {
+        // 更新物品数据和ID
         itemData = data;
+        itemID = itemData.id;
+        // 设置堆叠数量
         stackSize = amount;
     }
 
@@ -134,5 +156,26 @@ public class InventorySlot
         splitStack = new InventorySlot(itemData, halfStack);
 
         return true;
+    }
+
+    /// <summary>
+    /// 在序列化之前调用的回调方法
+    /// </summary>
+    public void OnBeforeSerialize()
+    {
+        
+    }
+
+    /// <summary>
+    /// 在反序列化之后调用的回调方法，用于加载物品数据
+    /// </summary>
+    public void OnAfterDeserialize()
+    {
+        // 如果物品ID无效则直接返回
+        if (itemID == -1) return;
+        
+        // 从资源中加载数据库并获取对应的物品数据
+        var db = Resources.Load<Database>("Database");
+        itemData = db.GetItem(itemID);
     }
 }

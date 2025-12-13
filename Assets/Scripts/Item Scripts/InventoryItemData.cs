@@ -12,7 +12,7 @@ public class InventoryItemData : ScriptableObject
     /// 物品唯一标识符
     /// 用于区分不同物品的ID值
     /// </summary>
-    public int id;
+    public int id = -1;
 
     /// <summary>
     /// 物品显示名称
