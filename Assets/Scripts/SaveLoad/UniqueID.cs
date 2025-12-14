@@ -47,6 +47,7 @@ public class UniqueID : MonoBehaviour
     /// <summary>
     /// 生成新的唯一标识符并将其添加到数据库中
     /// </summary>
+    [ContextMenu("Generate ID")]
     private void Generate()
     {
         id = Guid.NewGuid().ToString();

@@ -17,5 +17,5 @@ MonoBehaviour:
   description: This is Coin.
   icon: {fileID: 21300000, guid: 74370b42738b4f041bf3246a3cb49a85, type: 3}
   maxStackSize: 10
-  goldValue: 20
+  goldValue: 1
   itemPrefab: {fileID: 7472312076635046549, guid: 041bad0d7c6dca94fb63fcae231fb8b2, type: 3}
