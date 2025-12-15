@@ -61,10 +61,6 @@ public class ShopSystem
             var freeSlot = GetFreeSlot();
             freeSlot.AssignItem(data, amount);
         }
-
-        // // 获取一个空闲槽位并分配商品
-        // var freeSlot = GetFreeSlot();
-        // freeSlot.AssignItem(data, amount);
     }
 
     /// <summary>

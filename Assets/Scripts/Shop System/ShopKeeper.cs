@@ -15,6 +15,11 @@ public class ShopKeeper : MonoBehaviour, IInteractable
     [SerializeField] private ShopSystem shopSystem;
 
     /// <summary>
+    /// 商店窗口请求事件的委托定义
+    /// </summary>
+    public static UnityAction<ShopSystem, PlayerInventoryHolder> OnShopWindowRequested;
+
+    /// <summary>
     /// 在Awake阶段初始化商店系统，设置商品库存
     /// 根据配置的商品列表创建商店系统实例，并将初始商品添加到商店中
     /// </summary>
@@ -39,13 +44,26 @@ public class ShopKeeper : MonoBehaviour, IInteractable
     public UnityAction<IInteractable> OnInteractionComplete { get; set; }
     
     /// <summary>
-    /// 处理与交互者的交互逻辑
+    /// 处理交互器与当前对象的交互操作，主要用于打开商店窗口
     /// </summary>
-    /// <param name="interactor">发起交互的对象</param>
-    /// <param name="interactSuccessful">输出参数，指示交互是否成功</param>
+    /// <param name="interactor">发起交互的交互器对象</param>
+    /// <param name="interactSuccessful">输出参数，表示交互是否成功执行</param>
     public void Interact(Interactor interactor, out bool interactSuccessful)
     {
-        throw new System.NotImplementedException();
+        // 获取交互器上的玩家背包组件
+        var playerInv = interactor.GetComponent<PlayerInventoryHolder>();
+
+        if (playerInv != null)
+        {
+            // 触发商店窗口请求事件，传递商店系统和玩家背包信息
+            OnShopWindowRequested?.Invoke(shopSystem, playerInv);
+            interactSuccessful = true;
+        }
+        else
+        {
+            interactSuccessful = false;
+            Debug.LogError("Player inventory not found");
+        }
     }
 
     /// <summary>
@@ -54,6 +72,6 @@ public class ShopKeeper : MonoBehaviour, IInteractable
     /// </summary>
     public void EndInteraction()
     {
-        throw new System.NotImplementedException();
+        
     }
 }
