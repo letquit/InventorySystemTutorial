@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// UI控制器类，负责管理游戏中的用户界面显示逻辑
@@ -33,6 +34,15 @@ public class UIController : MonoBehaviour
     {
         // 取消订阅商店窗口请求事件
         ShopKeeper.OnShopWindowRequested -= DisplayShopWindow;
+    }
+
+    /// <summary>
+    /// 每帧检查键盘输入，当按下ESC键时隐藏商店界面
+    /// </summary>
+    private void Update()
+    {
+        // 检测ESC键是否在当前帧被按下，如果是则关闭商店显示界面
+        if (Keyboard.current.escapeKey.wasPressedThisFrame) shopKeeperDisplay.gameObject.SetActive(false);
     }
 
     /// <summary>

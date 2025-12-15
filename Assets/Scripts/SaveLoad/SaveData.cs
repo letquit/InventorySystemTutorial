@@ -20,6 +20,12 @@ public class SaveData
     /// 箱子字典，键为箱子ID，值为箱子保存数据
     /// </summary>
     public SerializableDictionary<string, InventorySaveData> ChestDictionary;
+
+    /// <summary>
+    /// 商店数据字典，用于存储和管理各个商店 keeper 的保存数据
+    /// </summary>
+    public SerializableDictionary<string, ShopSaveData> ShopKeeperDictionary;
+
     
     /// <summary>
     /// 玩家背包保存数据
@@ -39,5 +45,7 @@ public class SaveData
         ChestDictionary = new SerializableDictionary<string, InventorySaveData>();
         // 初始化玩家背包数据
         PlayerInventory = new InventorySaveData();
+        // 初始化商店管数据字典
+        ShopKeeperDictionary = new SerializableDictionary<string, ShopSaveData>();
     }
 }

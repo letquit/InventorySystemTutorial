@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -154,5 +155,60 @@ public class InventorySystem
     public void SpendGold(int basketTotal)
     {
         gold -= basketTotal;
+    }
+
+    /// <summary>
+    /// 获取库存中所有物品及其对应的总数量
+    /// </summary>
+    /// <returns>返回一个字典，键为物品数据，值为该物品的总数量</returns>
+    public Dictionary<InventoryItemData, int> GetAllItemsHeld()
+    {
+        var distinctItems = new Dictionary<InventoryItemData, int>();
+
+        // 遍历所有库存槽位，统计每种物品的总数量
+        foreach (var item in inventorySlots)
+        {
+            if (item.ItemData == null) continue;
+            
+            if (!distinctItems.ContainsKey(item.ItemData)) distinctItems.Add(item.ItemData, item.StackSize);
+            else distinctItems[item.ItemData] += item.StackSize;
+        }
+        
+        return distinctItems;
+    }
+
+    /// <summary>
+    /// 增加金币数量
+    /// </summary>
+    /// <param name="price">要增加的金币数量</param>
+    public void GainGold(int price)
+    {
+        gold += price;
+    }
+
+    /// <summary>
+    /// 从库存中移除指定数量的物品
+    /// </summary>
+    /// <param name="data">要移除的物品数据</param>
+    /// <param name="amount">要移除的物品数量</param>
+    public void RemoveItemsFromInventory(InventoryItemData data, int amount)
+    {
+        if (ContainsItem(data, out List<InventorySlot> invSlot))
+        {
+            // 遍历包含该物品的所有槽位，逐步移除指定数量的物品
+            foreach (var slot in invSlot)
+            {
+                var stackSize = slot.StackSize;
+                
+                if (stackSize > amount) slot.RemoveFromStack(amount);
+                else
+                {
+                    slot.RemoveFromStack(stackSize);
+                    amount -= stackSize;
+                }
+                
+                OnInventorySlotChanged?.Invoke(slot);
+            }
+        }
     }
 }

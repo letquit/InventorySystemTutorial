@@ -96,6 +96,8 @@ public abstract class ItemSlot : ISerializationCallbackReceiver
     public void RemoveFromStack(int amount)
     {
         stackSize -= amount;
+        // 如果堆叠数量小于等于零，则清空槽位
+        if (stackSize <= 0) ClearSlot();
     }
     
     /// <summary>

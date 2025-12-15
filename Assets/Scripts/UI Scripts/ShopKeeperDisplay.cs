@@ -64,6 +64,7 @@ public class ShopKeeperDisplay : MonoBehaviour
     /// </summary>
     private void RefreshDisplay()
     {
+        // 更新购买/出售按钮的文本和点击事件
         if (buyButton != null)
         {
             buyButtonText.text = _isSelling ? "Sell Items" : "Buy Items";
@@ -72,23 +73,51 @@ public class ShopKeeperDisplay : MonoBehaviour
             else buyButton.onClick.AddListener(BuyItems);
         }
         
+        // 清空物品槽位和预览信息
         ClearSlots();
+        ClearItemPreview();
 
+        // 重置购物篮状态和金额显示
         basketTotalText.enabled = false;
         buyButton.gameObject.SetActive(false);
         _basketTotal = 0;
-        playerGoldText.text = $"Player Gold: {_playerInventoryHolder.PrimaryInventorySystem.Gold}";
-        shopGoldText.text = $"Shop Gold: {_shopSystem.AvailableGold}";
         
-        DisplayShopInventory();
+        // 更新玩家和商店的金币显示
+        playerGoldText.text = $"Player Gold: {_playerInventoryHolder.PrimaryInventorySystem.Gold}G";
+        shopGoldText.text = $"Shop Gold: {_shopSystem.AvailableGold}G";
+        
+        // 根据当前模式显示对应的库存信息
+        if (_isSelling) DisplayPlayerInventory();
+        else DisplayShopInventory();
     }
 
     /// <summary>
     /// 处理玩家向商店出售物品的操作
     /// </summary>
+    /// <remarks>
+    /// 该方法首先检查商店是否有足够的金币来购买购物车中的物品，
+    /// 如果有足够资金，则遍历购物车中的每种物品，计算修改后的价格，
+    /// 然后执行物品出售操作，将获得的金币添加到玩家库存中，
+    /// 并从玩家库存中移除已出售的物品，最后刷新显示界面。
+    /// </remarks>
     private void SellItems()
     {
+        // 检查商店是否有足够的金币购买购物车中的物品
+        if (_shopSystem.AvailableGold < _basketTotal) return;
+
+        // 遍历购物车中的所有物品并进行出售处理
+        foreach (var kvp in _shoppingCart)
+        {
+            var price = GetModifiedPrice(kvp.Key, kvp.Value, _shopSystem.SellMarkUp);
+            
+            _shopSystem.SellItem(kvp.Key, kvp.Value, price);
+
+            _playerInventoryHolder.PrimaryInventorySystem.GainGold(price);
+            _playerInventoryHolder.PrimaryInventorySystem.RemoveItemsFromInventory(kvp.Key, kvp.Value);
+        }
         
+        // 刷新界面显示
+        RefreshDisplay();
     }
 
     /// <summary>
@@ -161,11 +190,19 @@ public class ShopKeeperDisplay : MonoBehaviour
 
     /// <summary>
     /// 用于展示玩家可售出的物品列表
-    /// 当前方法为空实现，待后续补充具体逻辑
     /// </summary>
     private void DisplayPlayerInventory()
     {
-        
+        // 遍历玩家库存中的所有物品
+        foreach (var item in _playerInventoryHolder.PrimaryInventorySystem.GetAllItemsHeld())
+        {
+            var tempSlot = new ShopSlot();
+            tempSlot.AssignItem(item.Key, item.Value);
+
+            // 实例化商店槽位预制体并初始化
+            var shopSlot = Instantiate(shopSlotPrefab, itemListContentPanel.transform);
+            shopSlot.Init(tempSlot, _shopSystem.SellMarkUp);
+        }
     }
 
     /// <summary>
@@ -217,7 +254,13 @@ public class ShopKeeperDisplay : MonoBehaviour
     /// </summary>
     private void ClearItemPreview()
     {
+        // 清空物品预览图像
+        itemPreviewSprite.sprite = null;
+        itemPreviewSprite.color = Color.clear;
         
+        // 清空物品名称和描述文本
+        itemPreviewName.text = "";
+        itemPreviewDescription.text = "";
     }
 
     /// <summary>
@@ -289,9 +332,11 @@ public class ShopKeeperDisplay : MonoBehaviour
     /// <returns>经过上浮处理后的整型价格数值</returns>
     public static int GetModifiedPrice(InventoryItemData data, int amount, float markUp)
     {
+        // 计算基础价值 = 物品单价 × 数量
         var baseValue = data.goldValue * amount;
 
-        return Mathf.RoundToInt(baseValue + baseValue * markUp);
+        // 返回上浮调整后的价格（向下取整）
+        return Mathf.FloorToInt(baseValue + baseValue * markUp);
     }
 
     /// <summary>
@@ -300,6 +345,31 @@ public class ShopKeeperDisplay : MonoBehaviour
     /// <param name="shopSlotUI">提供预览信息来源的商店槽位UI组件</param>
     private void UpdateItemPreview(ShopSlotUI shopSlotUI)
     {
+        // 获取商店槽位关联的物品数据
+        var data = shopSlotUI.AssignedItemSlot.ItemData;
         
+        // 更新预览区域的图标、名称和描述信息
+        itemPreviewSprite.sprite = data.icon;
+        itemPreviewSprite.color = Color.white;
+        itemPreviewName.text = data.displayName;
+        itemPreviewDescription.text = data.description;
+    }
+
+    /// <summary>
+    /// 处理购买标签按钮点击事件，切换到购买模式并刷新显示
+    /// </summary>
+    public void OnBuyTebPressed()
+    {
+        _isSelling = false;
+        RefreshDisplay();
+    }
+
+    /// <summary>
+    /// 处理出售标签按钮点击事件，切换到出售模式并刷新显示
+    /// </summary>
+    public void OnSellTabPressed()
+    {
+        _isSelling = true;
+        RefreshDisplay();
     }
 }

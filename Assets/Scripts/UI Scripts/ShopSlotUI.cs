@@ -78,7 +78,7 @@ public class ShopSlotUI : MonoBehaviour
             // 显示物品相关信息
             itemSprite.sprite = assignedItemSlot.ItemData.icon;
             itemSprite.color = Color.white;
-            itemCount.text = assignedItemSlot.StackSize.ToString();
+            itemCount.text = $"x{assignedItemSlot.StackSize}";
             // 计算修改后的价格
             var modifiedPrice = ShopKeeperDisplay.GetModifiedPrice(assignedItemSlot.ItemData, 1, MarkUp);
             
@@ -104,8 +104,7 @@ public class ShopSlotUI : MonoBehaviour
         
         _tempAmount--;
         ParentDisplay.AddItemToCart(this);
-        itemCount.text = _tempAmount.ToString();
-        
+        itemCount.text = $"x{_tempAmount}";
     }
 
     /// <summary>
@@ -118,6 +117,6 @@ public class ShopSlotUI : MonoBehaviour
         
         _tempAmount++;
         ParentDisplay.RemoveItemFromCart(this);
-        itemCount.text = _tempAmount.ToString();
+        itemCount.text = $"x{_tempAmount}";
     }
 }

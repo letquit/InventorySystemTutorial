@@ -14,10 +14,14 @@ public class ShopKeeper : MonoBehaviour, IInteractable
     [SerializeField] private ShopItemList shopItemsHeld;
     [SerializeField] private ShopSystem shopSystem;
 
+    private ShopSaveData _shopSaveData;
+    
     /// <summary>
     /// 商店窗口请求事件的委托定义
     /// </summary>
     public static UnityAction<ShopSystem, PlayerInventoryHolder> OnShopWindowRequested;
+
+    private string _id;
 
     /// <summary>
     /// 在Awake阶段初始化商店系统，设置商品库存
@@ -34,6 +38,52 @@ public class ShopKeeper : MonoBehaviour, IInteractable
         {
             shopSystem.AddToShop(item.itemData, item.amount);
         }
+        
+        _id = GetComponent<UniqueID>().ID;
+        _shopSaveData = new ShopSaveData(shopSystem);
+    }
+
+    /// <summary>
+    /// 在Start阶段检查并添加商店数据到游戏存档管理器中
+    /// 如果当前商店尚未在存档数据中注册，则将其添加到商店管理员字典中
+    /// </summary>
+    private void Start()
+    {
+        if (!SaveGameManager.Data.ShopKeeperDictionary.ContainsKey(_id))
+            SaveGameManager.Data.ShopKeeperDictionary.Add(_id, _shopSaveData);
+    }
+
+    /// <summary>
+    /// 在组件启用时订阅游戏加载事件
+    /// 当游戏加载事件触发时，调用LoadInventory方法来恢复商店库存数据
+    /// </summary>
+    private void OnEnable()
+    {
+        SaveLoad.OnLoadGame += LoadInventory;
+    }
+    
+    /// <summary>
+    /// 在组件禁用时取消订阅游戏加载事件
+    /// 防止在组件被销毁后仍然响应游戏加载事件
+    /// </summary>
+    private void OnDisable()
+    {
+        SaveLoad.OnLoadGame -= LoadInventory;
+    }
+
+    /// <summary>
+    /// 从存档数据中加载商店库存信息
+    /// 根据唯一标识符查找对应的商店保存数据，并恢复商店系统状态
+    /// </summary>
+    /// <param name="data">包含所有存档数据的对象</param>
+    private void LoadInventory(SaveData data)
+    {
+        // 尝试从存档数据中获取当前商店的保存数据，如果不存在则直接返回
+        if (!data.ShopKeeperDictionary.TryGetValue(_id, out ShopSaveData shopSaveData)) return;
+        
+        // 使用存档数据更新当前商店的保存数据和商店系统实例
+        _shopSaveData = shopSaveData;
+        shopSystem = shopSaveData.shopSystem;
     }
 
     /// <summary>
@@ -72,5 +122,26 @@ public class ShopKeeper : MonoBehaviour, IInteractable
     public void EndInteraction()
     {
         
+    }
+}
+
+/// <summary>
+/// 商店系统保存数据类，用于序列化和保存商店系统的状态信息
+/// </summary>
+[Serializable]
+public class ShopSaveData
+{
+    /// <summary>
+    /// 关联的商店系统实例
+    /// </summary>
+    public ShopSystem shopSystem;
+
+    /// <summary>
+    /// 初始化商店保存数据实例
+    /// </summary>
+    /// <param name="shopSystem">要保存的商店系统对象</param>
+    public ShopSaveData(ShopSystem shopSystem)
+    {
+        this.shopSystem = shopSystem;
     }
 }

@@ -60,7 +60,8 @@ public class ShopSystem
         if (ContainsItem(data, out ShopSlot shopSlot))
         {
             shopSlot.AddToStack(amount);
-        }else
+        }
+        else
         {
             // 获取一个空闲槽位并分配商品
             var freeSlot = GetFreeSlot();
@@ -119,5 +120,26 @@ public class ShopSystem
     public void GainGold(int basketTotal)
     {
         availableGold += basketTotal;
+    }
+
+    /// <summary>
+    /// 出售物品，将物品添加到商店并减少可用金币
+    /// </summary>
+    /// <param name="kvpKey">要出售的物品数据</param>
+    /// <param name="kvpValue">要出售的物品数量</param>
+    /// <param name="price">物品的售价</param>
+    public void SellItem(InventoryItemData kvpKey, int kvpValue, int price)
+    {
+        AddToShop(kvpKey, kvpValue);
+        ReduceGold(price);
+    }
+
+    /// <summary>
+    /// 减少可用金币数量
+    /// </summary>
+    /// <param name="price">要减少的金币数量</param>
+    private void ReduceGold(int price)
+    {
+        availableGold -= price;
     }
 }
