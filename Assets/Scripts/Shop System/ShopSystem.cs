@@ -15,6 +15,11 @@ public class ShopSystem
     [SerializeField] private float buyMarkUp;
     [SerializeField] private float sellMarkUp;
     
+    public List<ShopSlot> ShopInventory => shopInventory;
+    public int AvailableGold => availableGold;
+    public float BuyMarkUp => buyMarkUp;
+    public float SellMarkUp => sellMarkUp;
+    
     /// <summary>
     /// 初始化商店系统
     /// </summary>

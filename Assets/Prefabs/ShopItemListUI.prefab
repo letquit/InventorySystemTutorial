@@ -523,6 +523,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a670cd2eaacf00e4abf697235b34239f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopSlotUI
+  itemSprite: {fileID: 4418733778197811138}
+  itemName: {fileID: 4641318026117353353}
+  itemCount: {fileID: 1700039547660290786}
+  assignedItemSlot:
+    itemID: -1
+    stackSize: -1
+  addItemToCartButton: {fileID: 1205221767670560592}
+  removeItemFromCartButton: {fileID: 6646692160911554074}
 --- !u!1 &4846766188281700459
 GameObject:
   m_ObjectHideFlags: 0

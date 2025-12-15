@@ -32,7 +32,6 @@ public class ShopKeeper : MonoBehaviour, IInteractable
         // 将配置的商品列表添加到商店系统中
         foreach (var item in shopItemsHeld.Items)
         {
-            Debug.Log($"{item.itemData.displayName}: {item.amount}");
             shopSystem.AddToShop(item.itemData, item.amount);
         }
     }

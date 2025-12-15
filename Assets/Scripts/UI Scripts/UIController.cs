@@ -44,5 +44,7 @@ public class UIController : MonoBehaviour
     {
         // 激活商店显示界面
         shopKeeperDisplay.gameObject.SetActive(true);
+        // 调用显示商店窗口方法
+        shopKeeperDisplay.DisplayShopWindow(shopSystem, playerInventory);
     }
 }

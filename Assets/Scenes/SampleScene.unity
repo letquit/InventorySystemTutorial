@@ -1174,6 +1174,7 @@ MonoBehaviour:
   inventorySize: 50
   primaryInventorySystem:
     inventorySlots: []
+    gold: 0
   offset: 10
 --- !u!1001 &140633861
 PrefabInstance:
@@ -6623,7 +6624,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShopKeeperDisplay
   shopSlotPrefab: {fileID: 4276553309689349763, guid: 07f7a96acaa1fa541b381af8b96ac459, type: 3}
-  shoppingCartItemPrefab: {fileID: -2709201943323348888, guid: be04c51981a9bd34d9228feeeafab37b, type: 3}
+  shoppingCartItemUIPrefab: {fileID: -2709201943323348888, guid: be04c51981a9bd34d9228feeeafab37b, type: 3}
   buyTab: {fileID: 966765255}
   sellTab: {fileID: 10680658}
   basketTotalText: {fileID: 853455458}

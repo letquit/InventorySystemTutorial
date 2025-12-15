@@ -11,7 +11,10 @@ using UnityEngine.Events;
 public class InventorySystem
 {
     [SerializeField] private List<InventorySlot> inventorySlots;
-
+    [SerializeField] private int gold;
+    
+    public int Gold => gold;
+    
     public List<InventorySlot> InventorySlots => inventorySlots;
     public int InventorySize => inventorySlots.Count;
 
@@ -22,6 +25,27 @@ public class InventorySystem
     /// </summary>
     /// <param name="size">库存槽位的数量</param>
     public InventorySystem(int size)
+    {
+        gold = 0;
+        CreateInventory(size);
+    }
+
+    /// <summary>
+    /// 初始化库存系统并设置初始金币数量
+    /// </summary>
+    /// <param name="size">库存槽位的数量</param>
+    /// <param name="gold">初始金币数量</param>
+    public InventorySystem(int size, int gold)
+    {
+        this.gold = gold;
+        CreateInventory(size);
+    }
+
+    /// <summary>
+    /// 创建指定数量的库存槽位
+    /// </summary>
+    /// <param name="size">要创建的库存槽位数量</param>
+    private void CreateInventory(int size)
     {
         inventorySlots = new List<InventorySlot>(size);
 
