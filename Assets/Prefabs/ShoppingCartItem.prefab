@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7300b03bf83d60489114f2f4d65ca57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShoppingCartItem
+  itemText: {fileID: 1322113739199722218}
 --- !u!1 &5224893613995941951
 GameObject:
   m_ObjectHideFlags: 0

@@ -97,4 +97,27 @@ public class ShopSystem
         shopSlot = shopInventory.Find(i => i.ItemData == itemToAdd);
         return shopSlot != null;
     }
+
+    /// <summary>
+    /// 从商店购买指定数量的商品
+    /// </summary>
+    /// <param name="data">要购买的商品数据</param>
+    /// <param name="amount">购买的数量</param>
+    public void PurchaseItem(InventoryItemData data, int amount)
+    {
+        // 检查商店是否包含该商品，如果不包含则直接返回
+        if (!ContainsItem(data, out ShopSlot slot)) return;
+        
+        // 从商品堆叠中移除指定数量的商品
+        slot.RemoveFromStack(amount);
+    }
+
+    /// <summary>
+    /// 增加可用金币数量
+    /// </summary>
+    /// <param name="basketTotal">要增加的金币总数</param>
+    public void GainGold(int basketTotal)
+    {
+        availableGold += basketTotal;
+    }
 }

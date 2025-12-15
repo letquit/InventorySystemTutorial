@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 /// <summary>
@@ -7,5 +8,14 @@ using UnityEngine;
 /// </summary>
 public class ShoppingCartItemUI : MonoBehaviour
 {
+    [SerializeField] private TextMeshProUGUI itemText;
     
+    /// <summary>
+    /// 设置购物车物品的显示文本
+    /// </summary>
+    /// <param name="newString">要设置的新文本内容</param>
+    public void SetItemText(string newString)
+    {
+        itemText.text = newString;
+    }
 }

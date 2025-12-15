@@ -117,4 +117,42 @@ public class InventorySystem
         freeSlot = InventorySlots.FirstOrDefault(i => i.ItemData == null);
         return freeSlot != null;
     }
+
+    /// <summary>
+    /// 检查购物车中的商品是否都能添加到库存中
+    /// </summary>
+    /// <param name="shoppingCart">购物车字典，键为商品数据，值为商品数量</param>
+    /// <returns>如果所有商品都能成功添加到库存则返回true，否则返回false</returns>
+    public bool CheckInventoryRemaining(Dictionary<InventoryItemData, int> shoppingCart)
+    {
+        // 创建当前库存系统的副本用于模拟操作
+        var clonedSystem = new InventorySystem(this.InventorySize);
+
+        // 复制当前库存状态到克隆系统
+        for (int i = 0; i < InventorySize; i++)
+        {
+            clonedSystem.InventorySlots[i]
+                .AssignItem(this.InventorySlots[i].ItemData, this.InventorySlots[i].StackSize);
+        }
+
+        // 尝试将购物车中的每件商品添加到克隆的库存系统中
+        foreach (var kvp in shoppingCart)
+        {
+            for (int i = 0; i < kvp.Value; i++)
+            {
+                if (!clonedSystem.AddToInventory(kvp.Key, 1)) return false;
+            }
+        }
+        
+        return true;
+    }
+
+    /// <summary>
+    /// 消费指定数量的金币
+    /// </summary>
+    /// <param name="basketTotal">需要消费的金币总数</param>
+    public void SpendGold(int basketTotal)
+    {
+        gold -= basketTotal;
+    }
 }

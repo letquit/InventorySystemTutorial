@@ -13,8 +13,8 @@ public abstract class InventoryHolder : MonoBehaviour
     [SerializeField] private int inventorySize;
     // 快捷栏槽位
     [SerializeField] protected InventorySystem primaryInventorySystem;
-    
     [SerializeField] protected int offset = 10;
+    [SerializeField] protected int gold;
     
     /// <summary>
     /// 获取显示偏移量的属性
@@ -43,7 +43,7 @@ public abstract class InventoryHolder : MonoBehaviour
     {
         SaveLoad.OnLoadGame += LoadInventory;
         
-        primaryInventorySystem = new InventorySystem(inventorySize);
+        primaryInventorySystem = new InventorySystem(inventorySize, gold);
     }
 
     /// <summary>

@@ -13,9 +13,16 @@ public class ShopSlotUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI itemName;
     [SerializeField] private TextMeshProUGUI itemCount;
     [SerializeField] private ShopSlot assignedItemSlot;
+    
+    /// <summary>
+    /// 获取与此UI关联的商店槽位数据对象
+    /// </summary>
+    public ShopSlot AssignedItemSlot => assignedItemSlot;
 
     [SerializeField] private Button addItemToCartButton;
     [SerializeField] private Button removeItemFromCartButton;
+
+    private int _tempAmount;
     
     /// <summary>
     /// 获取该UI元素所属的商店显示组件
@@ -40,7 +47,7 @@ public class ShopSlotUI : MonoBehaviour
         itemCount.text = "";
         
         // 绑定按钮点击事件
-        addItemToCartButton?.onClick.AddListener(AdddItemToCart);
+        addItemToCartButton?.onClick.AddListener(AddItemToCart);
         removeItemFromCartButton?.onClick.AddListener(RemoveItemFromCart);
         
         // 查找并设置父级商店显示组件引用
@@ -56,6 +63,7 @@ public class ShopSlotUI : MonoBehaviour
     {
         assignedItemSlot = slot;
         MarkUp = markUp;
+        _tempAmount = slot.StackSize;
         UpdateUISlot();
     }
 
@@ -71,7 +79,10 @@ public class ShopSlotUI : MonoBehaviour
             itemSprite.sprite = assignedItemSlot.ItemData.icon;
             itemSprite.color = Color.white;
             itemCount.text = assignedItemSlot.StackSize.ToString();
-            itemName.text = $"{assignedItemSlot.ItemData.displayName} - {assignedItemSlot.ItemData.goldValue}G";
+            // 计算修改后的价格
+            var modifiedPrice = ShopKeeperDisplay.GetModifiedPrice(assignedItemSlot.ItemData, 1, MarkUp);
+            
+            itemName.text = $"{assignedItemSlot.ItemData.displayName} - {modifiedPrice}G";
         }
         else
         {
@@ -84,18 +95,29 @@ public class ShopSlotUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 添加物品到购物车的回调方法
+    /// 将当前物品添加到购物车中。若临时库存不足则不执行操作。
+    /// 每次调用会减少一个单位的可购买数量，并通知父级界面进行同步。
     /// </summary>
-    private void AdddItemToCart()
+    private void AddItemToCart()
     {
-        Debug.Log("Adding item to cart");
+        if (_tempAmount <= 0) return;
+        
+        _tempAmount--;
+        ParentDisplay.AddItemToCart(this);
+        itemCount.text = _tempAmount.ToString();
+        
     }
 
     /// <summary>
-    /// 从购物车中移除物品的回调方法
+    /// 从购物车中移除当前物品。若临时库存等于原始堆叠数则不执行操作。
+    /// 每次调用会增加一个单位的可购买数量，并通知父级界面进行同步。
     /// </summary>
     private void RemoveItemFromCart()
     {
-        Debug.Log("Removing item from cart");
+        if (_tempAmount == assignedItemSlot.StackSize) return;
+        
+        _tempAmount++;
+        ParentDisplay.RemoveItemFromCart(this);
+        itemCount.text = _tempAmount.ToString();
     }
 }

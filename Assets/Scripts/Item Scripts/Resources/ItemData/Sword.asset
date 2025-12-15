@@ -17,5 +17,5 @@ MonoBehaviour:
   description: This is a sword!
   icon: {fileID: 21300000, guid: c184df3afa95f504cbb3325836f8c5f3, type: 3}
   maxStackSize: 1
-  goldValue: 15
+  goldValue: 100
   itemPrefab: {fileID: 5562773066751047420, guid: f89b30f053bf6b549afd8661f739d573, type: 3}
